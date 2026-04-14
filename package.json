@@ -1,0 +1,19 @@
+{
+  "name": "pi-synthetic-subagent",
+  "version": "1.0.0",
+  "description": "Pi extension for delegating tasks to specialized subagents with model-aware concurrency scheduling for Synthetic provider",
+  "license": "MIT",
+  "keywords": [
+    "pi-package"
+  ],
+  "pi": {
+    "extensions": ["./extensions"]
+  },
+  "peerDependencies": {
+    "@mariozechner/pi-coding-agent": "*",
+    "@mariozechner/pi-ai": "*",
+    "@mariozechner/pi-tui": "*",
+    "@mariozechner/pi-agent-core": "*",
+    "@sinclair/typebox": "*"
+  }
+}
