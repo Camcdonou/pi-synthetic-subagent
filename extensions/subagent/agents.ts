@@ -98,16 +98,22 @@ export function discoverAgents(cwd: string, scope: AgentScope): AgentDiscoveryRe
 	const userDir = path.join(getAgentDir(), "agents");
 	const projectAgentsDir = findNearestProjectAgentsDir(cwd);
 
+	// Also discover agents bundled with this extension (next to agents.ts)
+	const bundledDir = path.join(__dirname, "agents");
+
 	const userAgents = scope === "project" ? [] : loadAgentsFromDir(userDir, "user");
 	const projectAgents = scope === "user" || !projectAgentsDir ? [] : loadAgentsFromDir(projectAgentsDir, "project");
+	const bundledAgents = loadAgentsFromDir(bundledDir, "user");
 
 	const agentMap = new Map<string, AgentConfig>();
 
 	if (scope === "both") {
-		for (const agent of userAgents) agentMap.set(agent.name, agent);
-		for (const agent of projectAgents) agentMap.set(agent.name, agent);
+		for (const agent of bundledAgents) agentMap.set(agent.name, agent);
+		for (const agent of userAgents) agentMap.set(agent.name, agent);  // user overrides bundled
+		for (const agent of projectAgents) agentMap.set(agent.name, agent);  // project overrides user
 	} else if (scope === "user") {
-		for (const agent of userAgents) agentMap.set(agent.name, agent);
+		for (const agent of bundledAgents) agentMap.set(agent.name, agent);
+		for (const agent of userAgents) agentMap.set(agent.name, agent);  // user overrides bundled
 	} else {
 		for (const agent of projectAgents) agentMap.set(agent.name, agent);
 	}

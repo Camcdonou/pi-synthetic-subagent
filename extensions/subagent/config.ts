@@ -27,6 +27,7 @@ export interface SubagentConfig {
 	models: Record<string, ModelConfig>;        // model ID → config
 	weeklyBudget: number;                       // weekly budget in USD
 	defaultModel: string;                       // fallback model when agent doesn't specify one
+	provider: string;                           // provider name for CLI model resolution (e.g. "synthetic")
 }
 
 // ---------------------------------------------------------------------------
@@ -65,6 +66,7 @@ export const DEFAULT_CONFIG: SubagentConfig = {
 	models: { ...DEFAULT_MODELS },
 	weeklyBudget: 24,
 	defaultModel: "hf:MiniMaxAI/MiniMax-M2.5",
+	provider: "synthetic",
 };
 
 // ---------------------------------------------------------------------------
@@ -138,6 +140,7 @@ export function loadConfig(): SubagentConfig {
 		models: { ...DEFAULT_MODELS },
 		weeklyBudget: typeof raw.weeklyBudget === "number" ? raw.weeklyBudget : DEFAULT_CONFIG.weeklyBudget,
 		defaultModel: typeof raw.defaultModel === "string" ? raw.defaultModel : DEFAULT_CONFIG.defaultModel,
+		provider: typeof raw.provider === "string" ? raw.provider : DEFAULT_CONFIG.provider,
 	};
 
 	// Override models if user has custom config
@@ -168,6 +171,7 @@ export function saveConfig(config: SubagentConfig): void {
 		models: config.models,
 		weeklyBudget: config.weeklyBudget,
 		defaultModel: config.defaultModel,
+		provider: config.provider,
 	};
 	writeSettingsJson(settings);
 }
@@ -183,6 +187,20 @@ export function hasConfig(): boolean {
 /**
  * Format a model ID for display (strip provider prefix).
  */
+/**
+ * Resolve a model ID to the provider/model format that pi's CLI expects.
+ * E.g. "hf:zai-org/GLM-4.7-Flash" → "synthetic/hf:zai-org/GLM-4.7-Flash"
+ */
+export function resolveModelForCli(modelId: string, provider: string): string {
+	if (modelId.includes("/")) {
+		// Already has a provider prefix like "synthetic/hf:..."
+		const parts = modelId.split("/");
+		// If first part looks like a provider name, return as-is
+		if (parts[0] && !parts[0].includes(":")) return modelId;
+	}
+	return `${provider}/${modelId}`;
+}
+
 export function displayModel(modelId: string): string {
 	// "hf:nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-NVFP4" → "NVIDIA-Nemotron-3-Super"
 	const parts = modelId.split("/");

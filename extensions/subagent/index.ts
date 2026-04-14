@@ -31,7 +31,7 @@ import { type ExtensionAPI, getMarkdownTheme, withFileMutationQueue } from "@mar
 import { Container, Markdown, Spacer, Text } from "@mariozechner/pi-tui";
 import { Type } from "@sinclair/typebox";
 import { type AgentConfig, type AgentScope, discoverAgents } from "./agents.js";
-import { type SubagentConfig, loadConfig, saveConfig, hasConfig, displayModel, computeSlots, formatSlotSummary } from "./config.js";
+import { type SubagentConfig, loadConfig, saveConfig, hasConfig, displayModel, computeSlots, formatSlotSummary, resolveModelForCli } from "./config.js";
 import { SlotTracker, schedule, estimateCost, findBestAvailableModel, formatSlotSnapshot } from "./scheduler.js";
 import { BudgetTracker } from "./budget.js";
 import { runSetupWizard } from "./setup-wizard.js";
@@ -278,6 +278,7 @@ async function runSingleAgent(
 	signal: AbortSignal | undefined,
 	onUpdate: OnUpdateCallback | undefined,
 	makeDetails: (results: SingleResult[]) => SubagentDetails,
+	config: SubagentConfig,
 	overrideModel?: string,  // model override from scheduler
 	isFallback?: boolean,     // whether overrideModel is a fallback
 	requestedModel?: string,  // original requested model
@@ -300,9 +301,10 @@ async function runSingleAgent(
 
 	// Use override model from scheduler, or fall back to agent's configured model
 	const effectiveModel = overrideModel || agent.model;
+	const cliModel = effectiveModel ? resolveModelForCli(effectiveModel, config.provider) : undefined;
 
 	const args: string[] = ["--mode", "json", "-p", "--no-session"];
-	if (effectiveModel) args.push("--model", effectiveModel);
+	if (cliModel) args.push("--model", cliModel);
 	if (agent.tools && agent.tools.length > 0) args.push("--tools", agent.tools.join(","));
 
 	let tmpPromptDir: string | null = null;
@@ -721,6 +723,7 @@ export default function (pi: ExtensionAPI) {
 						signal,
 						chainUpdate,
 						makeDetails("chain"),
+						config,
 						assignedModel !== requestedModel ? assignedModel : undefined,
 						isFallback,
 						requestedModel,
@@ -838,6 +841,7 @@ export default function (pi: ExtensionAPI) {
 							}
 						},
 						makeDetails("parallel"),
+						config,
 						scheduledTask.isFallback ? scheduledTask.assignedModel : undefined,
 						scheduledTask.isFallback,
 						scheduledTask.requestedModel,
@@ -905,6 +909,7 @@ export default function (pi: ExtensionAPI) {
 								}
 							},
 							makeDetails("parallel"),
+							config,
 							task.isFallback ? modelToUse : undefined,
 							task.isFallback,
 							task.requestedModel,
@@ -975,6 +980,7 @@ export default function (pi: ExtensionAPI) {
 					signal,
 					onUpdate,
 					makeDetails("single"),
+					config,
 					isFallback ? assignedModel : undefined,
 					isFallback,
 					requestedModel,

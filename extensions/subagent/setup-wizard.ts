@@ -117,6 +117,7 @@ export async function runSetupWizard(pi: ExtensionAPI, ctx: any): Promise<Subage
 				models: { ...state.models },
 				weeklyBudget: state.weeklyBudget,
 				defaultModel: state.defaultModel,
+				provider: "synthetic",
 			};
 		}
 
