@@ -503,26 +503,7 @@ export default function (pi: ExtensionAPI) {
 	let budgetTracker: BudgetTracker = new BudgetTracker(config);
 	let setupDone = false;
 
-	// ── Register models that pi's provider doesn't know about ──
-	// This ensures `--model synthetic/hf:zai-org/GLM-4.7-Flash` works natively
-	// instead of relying on the fragile "custom model ID" fallback.
-	const modelsToRegister = Object.entries(config.models).map(([modelId, modelConfig]) => ({
-		id: modelId,
-		name: modelId.split("/").pop() || modelId,
-		reasoning: true,
-		input: ["text" as const, ...("image" as const[])],  // support both
-		cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },  // cost handled by Synthetic
-		contextWindow: 200000,
-		maxTokens: 65536,
-	}));
-
-	if (modelsToRegister.length > 0) {
-		pi.registerProvider(config.provider, {
-			models: modelsToRegister,
-		});
-	}
-
-	// ── Session Start: Load config, trigger setup wizard if needed ──
+// ── Session Start: Load config, trigger setup wizard if needed ──
 	pi.on("session_start", async (_event, ctx) => {
 		if (setupDone) return;
 
