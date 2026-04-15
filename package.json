@@ -1,8 +1,17 @@
 {
   "name": "pi-synthetic-subagent",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Pi extension for delegating tasks to specialized subagents with model-aware concurrency scheduling for Synthetic provider",
   "license": "MIT",
+  "author": "Connor McDonough",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Camcdonou/pi-synthetic-subagent.git"
+  },
+  "homepage": "https://github.com/Camcdonou/pi-synthetic-subagent#readme",
+  "bugs": {
+    "url": "https://github.com/Camcdonou/pi-synthetic-subagent/issues"
+  },
   "keywords": [
     "pi-package"
   ],
