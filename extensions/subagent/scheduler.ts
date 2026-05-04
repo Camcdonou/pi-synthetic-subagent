@@ -8,7 +8,7 @@
  * Analogy: 4 CPUs, each with N cores.
  *   - GLM-4.7-Flash:     dual-core (2 slots per pack, small model)
  *   - MiniMax-M2.5:       single-core (1 slot per pack, standard)
- *   - Kimi-K2.5:          single-core (1 slot per pack, standard)
+ *   - Kimi-K2.6:          single-core (1 slot per pack, standard)
  *   - GLM-5.1:            single-core (1 slot per pack, standard)
  *
  * Scheduling rules:

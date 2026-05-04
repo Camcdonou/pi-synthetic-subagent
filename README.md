@@ -22,14 +22,14 @@ Synthetic gives you per-model concurrency, not global concurrency. This extensio
 |-------|-------|-----------|------|------|
 | GLM-4.7-Flash | Small | 2 | fast | Quick tasks (scout, doc-writer) |
 | MiniMax-M2.5 | Standard | 1 | power | Side coder (worker) |
-| Kimi-K2.5 | Standard | 1 | power | Deep researcher (planner) |
+| Kimi-K2.6 | Standard | 1 | power | Deep researcher (planner) |
 | GLM-5.1 | Standard | 1 | power | Architectural review (reviewer) |
 
 Only **GLM-4.7-Flash** and **Nemotron-3-Super** are classified as "small models" by Synthetic, giving 2× concurrency per pack. All other models get 1× per pack.
 
 ### Slot Totals by Pack Count
 
-| Packs | GLM-4.7-Flash | MiniMax-M2.5 | Kimi-K2.5 | GLM-5.1 | **Total** |
+| Packs | GLM-4.7-Flash | MiniMax-M2.5 | Kimi-K2.6 | GLM-5.1 | **Total** |
 |-------|---------------|--------------|-----------|---------|-----------|
 | 1     | 2             | 1            | 1         | 1       | **5**     |
 | 2     | 4             | 2            | 2         | 2       | **10**    |
@@ -41,7 +41,7 @@ With 1 pack, all 5 agents can run simultaneously with **zero slot contention** �
 
 1. **Soft affinity** — prefer the agent's configured model
 2. **Same-tier fallback** — if slots full, use another model in the same tier (sorted by cost)
-   - Power tier: MiniMax-M2.5 (0.53x) → Kimi-K2.5 (0.79x) → GLM-5.1 (1.0x)
+   - Power tier: MiniMax-M2.5 (0.53x) → Kimi-K2.6 (0.79x) → GLM-5.1 (1.0x)
    - Fast tier: only GLM-4.7-Flash
 3. **No cross-tier fallback** — won't silently swap a power-tier agent to a fast-tier model
 4. **Queue** — if no same-tier slots available, wait for one to free up
@@ -120,7 +120,7 @@ Chain passes each step's output to the next via the `{previous}` placeholder.
 | Agent | Model | Tier | SWE-Bench | Tools | Purpose |
 |-------|-------|------|-----------|-------|---------|
 | `scout` | GLM-4.7-Flash | fast | 59.2% | read, grep, find, ls, bash | Fast recon, returns compressed context |
-| `planner` | Kimi-K2.5 | power | 76.8% | read, grep, find, ls | Creates implementation plans (read-only) |
+| `planner` | Kimi-K2.6 | power | 76.8% | read, grep, find, ls | Creates implementation plans (read-only) |
 | `worker` | MiniMax-M2.5 | power | **80.2%** | all | General-purpose coder, writes code |
 | `reviewer` | GLM-5.1 | power | 58.4% (Pro) | read, grep, find, ls, bash | Architectural review (read-only bash) |
 | `doc-writer` | GLM-4.7-Flash | fast | 59.2% | read, write, edit, grep, find, ls | Documentation generation |
@@ -128,7 +128,7 @@ Chain passes each step's output to the next via the `{previous}` placeholder.
 ### Why these models?
 
 - **MiniMax-M2.5 for worker**: 80.2% SWE-Bench Verified — best coding model on Synthetic. Strong tool use (BFCL: 76.8%) and web browsing (BrowseComp: 76.3%).
-- **Kimi-K2.5 for planner**: 76.8% SWE-Bench, 50.2% HLE (strongest reasoner), built for long multi-turn agent workflows.
+- **Kimi-K2.6 for planner**: 76.8% SWE-Bench, 50.2% HLE (strongest reasoner), built for long multi-turn agent workflows.
 - **GLM-5.1 for reviewer**: SOTA SWE-Bench Pro (58.4%), best architectural understanding (MCP-Atlas: 71.8%), strong agentic performance (τ³-Bench: 70.6%, BrowseComp: 68.0%). Best at understanding code changes in context.
 - **GLM-4.7-Flash for scout/doc-writer**: 59.2% SWE-Bench, 87.4% τ²-Bench (excellent tool use), cheapest model at 0.13× relative cost, gets 2× concurrency as a small model.
 
@@ -173,7 +173,7 @@ Config is stored in `~/.pi/agent/settings.json` under the `"subagent"` key:
       "hf:MiniMaxAI/MiniMax-M2.5": {
         "slots": 1, "cost": 0.53, "tier": "power", "isSmall": false
       },
-      "hf:moonshotai/Kimi-K2.5": {
+      "hf:moonshotai/Kimi-K2.6": {
         "slots": 1, "cost": 0.79, "tier": "power", "isSmall": false
       },
       "hf:zai-org/GLM-5.1": {
@@ -223,7 +223,7 @@ Budget state persists across reloads within the same session but resets on new s
 ### Collapsed view
 - Status icon (✓/✗/⏳) and agent name
 - Fallback indicator: `⚡ model-name` when a different model was used
-- Slot usage: `GLM-4.7-Flash:1/2 | MiniMax-M2.5:1/1 | Kimi-K2.5:0/1 | GLM-5.1:0/1`
+- Slot usage: `GLM-4.7-Flash:1/2 | MiniMax-M2.5:1/1 | Kimi-K2.6:0/1 | GLM-5.1:0/1`
 - Budget warnings: `⚠ approaching limit`
 
 ### Expanded view (Ctrl+O)

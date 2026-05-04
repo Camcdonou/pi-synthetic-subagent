@@ -47,7 +47,7 @@ export const DEFAULT_MODELS: Record<string, ModelConfig> = {
 		tier: "power",
 		isSmall: false,
 	},
-	"hf:moonshotai/Kimi-K2.5": {
+	"hf:moonshotai/Kimi-K2.6": {
 		slots: 1,
 		cost: 0.79,
 		tier: "power",

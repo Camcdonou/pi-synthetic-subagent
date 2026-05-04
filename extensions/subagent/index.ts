@@ -582,7 +582,7 @@ export default function (pi: ExtensionAPI) {
 			"",
 			"Agent selection guide:",
 			"- scout (GLM-4.7-Flash): Quick surface-level exploration — list files, read headers, find patterns. Use FIRST for unfamiliar repos.",
-			"- planner (Kimi-K2.5): Deep reasoning, architecture analysis, task decomposition. Use for planning complex multi-step work.",
+			"- planner (Kimi-K2.6): Deep reasoning, architecture analysis, task decomposition. Use for planning complex multi-step work.",
 			"- worker (MiniMax-M2.5): Code implementation, bug fixes, refactoring. Best coding model.",
 			"- reviewer (GLM-5.1): Code review, architecture critique, security audit. Use AFTER worker for quality gates.",
 			"- doc-writer (GLM-4.7-Flash): Generate documentation, READMEs, API docs from source code. Use AFTER understanding the codebase.",
