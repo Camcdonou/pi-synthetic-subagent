@@ -37,19 +37,19 @@ export interface SubagentConfig {
 export const DEFAULT_MODELS: Record<string, ModelConfig> = {
 	"hf:zai-org/GLM-4.7-Flash": {
 		slots: 2,
-		cost: 0.13,
+		cost: 0.15,
 		tier: "fast",
 		isSmall: true,
 	},
 	"hf:MiniMaxAI/MiniMax-M2.5": {
 		slots: 1,
-		cost: 0.53,
+		cost: 0.6,
 		tier: "power",
 		isSmall: false,
 	},
 	"hf:moonshotai/Kimi-K2.6": {
 		slots: 1,
-		cost: 0.79,
+		cost: 1.24,
 		tier: "power",
 		isSmall: false,
 	},

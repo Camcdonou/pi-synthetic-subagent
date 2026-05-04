@@ -41,7 +41,7 @@ With 1 pack, all 5 agents can run simultaneously with **zero slot contention** �
 
 1. **Soft affinity** — prefer the agent's configured model
 2. **Same-tier fallback** — if slots full, use another model in the same tier (sorted by cost)
-   - Power tier: MiniMax-M2.5 (0.53x) → Kimi-K2.6 (0.79x) → GLM-5.1 (1.0x)
+   - Power tier: MiniMax-M2.5 (0.6x) → GLM-5.1 (1.0x) → Kimi-K2.6 (1.24x)
    - Fast tier: only GLM-4.7-Flash
 3. **No cross-tier fallback** — won't silently swap a power-tier agent to a fast-tier model
 4. **Queue** — if no same-tier slots available, wait for one to free up
@@ -120,7 +120,7 @@ Chain passes each step's output to the next via the `{previous}` placeholder.
 | Agent | Model | Tier | SWE-Bench | Tools | Purpose |
 |-------|-------|------|-----------|-------|---------|
 | `scout` | GLM-4.7-Flash | fast | 59.2% | read, grep, find, ls, bash | Fast recon, returns compressed context |
-| `planner` | Kimi-K2.6 | power | 76.8% | read, grep, find, ls | Creates implementation plans (read-only) |
+| `planner` | Kimi-K2.6 | power | 80.2% | read, grep, find, ls | Creates implementation plans (read-only) |
 | `worker` | MiniMax-M2.5 | power | **80.2%** | all | General-purpose coder, writes code |
 | `reviewer` | GLM-5.1 | power | 58.4% (Pro) | read, grep, find, ls, bash | Architectural review (read-only bash) |
 | `doc-writer` | GLM-4.7-Flash | fast | 59.2% | read, write, edit, grep, find, ls | Documentation generation |
@@ -128,9 +128,9 @@ Chain passes each step's output to the next via the `{previous}` placeholder.
 ### Why these models?
 
 - **MiniMax-M2.5 for worker**: 80.2% SWE-Bench Verified — best coding model on Synthetic. Strong tool use (BFCL: 76.8%) and web browsing (BrowseComp: 76.3%).
-- **Kimi-K2.6 for planner**: 76.8% SWE-Bench, 50.2% HLE (strongest reasoner), built for long multi-turn agent workflows.
+- **Kimi-K2.6 for planner**: 80.2% SWE-Bench, 54.0% HLE (strongest reasoner), built for long multi-turn agent workflows.
 - **GLM-5.1 for reviewer**: SOTA SWE-Bench Pro (58.4%), best architectural understanding (MCP-Atlas: 71.8%), strong agentic performance (τ³-Bench: 70.6%, BrowseComp: 68.0%). Best at understanding code changes in context.
-- **GLM-4.7-Flash for scout/doc-writer**: 59.2% SWE-Bench, 87.4% τ²-Bench (excellent tool use), cheapest model at 0.13× relative cost, gets 2× concurrency as a small model.
+- **GLM-4.7-Flash for scout/doc-writer**: 59.2% SWE-Bench, 87.4% τ²-Bench (excellent tool use), cheapest model at 0.15× relative cost, gets 2× concurrency as a small model.
 
 ### Slot diversity
 
@@ -168,13 +168,13 @@ Config is stored in `~/.pi/agent/settings.json` under the `"subagent"` key:
     "defaultModel": "hf:MiniMaxAI/MiniMax-M2.5",
     "models": {
       "hf:zai-org/GLM-4.7-Flash": {
-        "slots": 2, "cost": 0.13, "tier": "fast", "isSmall": true
+        "slots": 2, "cost": 0.15, "tier": "fast", "isSmall": true
       },
       "hf:MiniMaxAI/MiniMax-M2.5": {
-        "slots": 1, "cost": 0.53, "tier": "power", "isSmall": false
+        "slots": 1, "cost": 0.6, "tier": "power", "isSmall": false
       },
       "hf:moonshotai/Kimi-K2.6": {
-        "slots": 1, "cost": 0.79, "tier": "power", "isSmall": false
+        "slots": 1, "cost": 1.24, "tier": "power", "isSmall": false
       },
       "hf:zai-org/GLM-5.1": {
         "slots": 1, "cost": 1.0, "tier": "power", "isSmall": false
