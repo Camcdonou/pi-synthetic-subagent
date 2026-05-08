@@ -10,8 +10,8 @@
  * Uses ctx.ui.custom() for a tab-based multi-step flow.
  */
 
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
-import { Key, matchesKey, Text, truncateToWidth } from "@mariozechner/pi-tui";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { Key, matchesKey, Text, truncateToWidth } from "@earendil-works/pi-tui";
 import {
 	type SubagentConfig,
 	type ModelConfig,
